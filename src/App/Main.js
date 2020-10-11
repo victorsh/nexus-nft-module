@@ -4,6 +4,8 @@ import {
   updateInput,
 } from 'actions/actionCreators';
 
+import path from 'path';
+
 const {
   libraries: {
     React,
@@ -25,6 +27,10 @@ const DemoTextField = styled(TextField)({
   maxWidth: 400,
 });
 
+const AssetTextField = styled(TextField)({
+  maxWidth: 400,
+})
+
 @connect(
   (state) => ({
     coreInfo: state.coreInfo,
@@ -35,6 +41,13 @@ const DemoTextField = styled(TextField)({
   { showConnections, hideConnections, updateInput }
 )
 class Main extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      assetInputAddressValue: ''
+    }
+  }
+  
   //This setting will be saved to disk
   confirmToggle = async () => {
     const { showingConnections, showConnections, hideConnections } = this.props;
@@ -56,6 +69,10 @@ class Main extends React.Component {
   handleChange = (e) => {
     this.props.updateInput(e.target.value);
   };
+
+  handleAssetInputAddressChange = (e) => {
+    this.setState({ assetInputAddressValue: e.target.value })
+  }
 
   /// rpcCall for legacy API
   getDifficulty = async () => {
@@ -87,6 +104,25 @@ class Main extends React.Component {
       });
     }
   };
+
+  // apiCall for Asset
+  getAsset = async (addr) => {
+    try {
+      const params = { address: addr }
+      const path = 'assets/get/asset'
+      const result = await apiCall(path, params)
+      console.log(result)
+      showSuccessDialog({
+        message: 'Asset',
+        note: JSON.stringify(result, null, 2)
+      });
+    } catch (error) {
+      console.log(error)
+      showErrorDialog({
+        message: 'Canot get asset',
+      })
+    }
+  }
 
   render() {
     const { coreInfo, showingConnections, inputValue, userStatus } = this.props;
@@ -125,6 +161,18 @@ class Main extends React.Component {
             onChange={this.handleChange}
             placeholder="Type anything here"
           />
+        </div>
+
+        <div className="mt2">
+          <div>
+            Enter the address of the Asset
+          </div>
+          <AssetTextField
+            value={this.state.assetInputAddressValue}
+            onChange={e => this.handleAssetInputAddressChange(e)}
+            placeholder="Address..."
+          />
+          <Button onClick={() => this.getAsset(this.state.assetInputAddressValue)}>View Asset</Button>
         </div>
 
         <div className="mt2">

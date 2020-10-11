@@ -1,6 +1,6 @@
 {
-  "name": "_dev_react_redux_module_example",
-  "displayName": "React Redux Module Development",
+  "name": "_dev_nexus_nft_market_module",
+  "displayName": "Nexus NFT Market Module",
   "type": "app",
   "entry": "http://localhost:24011/dev.html",
   "icon": "dist/react.svg"
