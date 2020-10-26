@@ -1,5 +1,6 @@
 import configureStore from './configureStore';
 import App from './App';
+import App2 from './App';
 import {
   initialize,
   updateCoreInfo,
@@ -13,6 +14,7 @@ const {
   libraries: {
     React,
     ReactDOM,
+    ReactRouterDOM: { BrowserRouter, Route, Switch },
     ReactRedux: { Provider },
   },
   utilities: {

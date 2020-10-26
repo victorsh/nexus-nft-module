@@ -4,7 +4,7 @@ import {
   updateInput,
 } from 'actions/actionCreators';
 
-import path from 'path';
+import nxsApi from '../nxs-api/index'
 
 const {
   libraries: {
@@ -12,12 +12,18 @@ const {
     ReactRedux: { connect },
     emotion: { styled },
   },
-  components: { GlobalStyles, Panel, Switch, Tooltip, TextField, Button },
+  components: {
+    GlobalStyles,
+    Panel,
+    Switch,
+    Tooltip,
+    TextField,
+    Button
+  },
   utilities: {
     confirm,
     rpcCall,
     apiCall,
-    onceRpcReturn,
     showErrorDialog,
     showSuccessDialog,
   },
@@ -44,7 +50,8 @@ class Main extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      assetInputAddressValue: ''
+      assetInputAddressValue: '',
+      isMarketView: false,
     }
   }
   
@@ -105,87 +112,85 @@ class Main extends React.Component {
     }
   };
 
-  // apiCall for Asset
-  getAsset = async (addr) => {
-    try {
-      const params = { address: addr }
-      const path = 'assets/get/asset'
-      const result = await apiCall(path, params)
-      console.log(result)
-      showSuccessDialog({
-        message: 'Asset',
-        note: JSON.stringify(result, null, 2)
-      });
-    } catch (error) {
-      console.log(error)
-      showErrorDialog({
-        message: 'Canot get asset',
-      })
-    }
-  }
-
   render() {
     const { coreInfo, showingConnections, inputValue, userStatus } = this.props;
     return (
-      <Panel
-        title="React Module Example"
-        icon={{ url: 'react.svg', id: 'icon' }}
-      >
+      <React.Fragment>
         <GlobalStyles />
-        <div>
-          This showcases how a Nexus Wallet Modules can interact with the base
-          wallet.
-        </div>
 
-        <div className="mt2 flex center">
-          Show number of connections&nbsp;&nbsp;
-          <Tooltip.Trigger
-            position="right"
-            tooltip="This setting will be remembered even when the wallet is restarted"
+        {/* Navi */}
+        <div style={{ marginLeft: '40%' }}>
+          <Button>Market</Button>
+          <Button>Manage</Button>
+        </div>
+        
+        {this.isMarketView ? 
+          <Panel
+            title="React Module Example"
+            icon={{ url: 'react.svg', id: 'icon' }}
           >
-            <Switch
-              checked={showingConnections}
-              onChange={this.confirmToggle}
-            />
-          </Tooltip.Trigger>
-        </div>
-        {!!showingConnections && <div>Connections: {coreInfo.connections}</div>}
+            <div className="mt2" style={{display: "flex"}}>
+              <div style={{width: "50%"}}>
+                <div>
+                  Asset Address
+                </div>
+                <TextField
+                  value={this.state.assetInputAddressValue}
+                  onChange={e => this.handleAssetInputAddressChange(e)}
+                  placeholder="Address..."
+                />
+              </div>
+              {/* <Button onClick={() => assetApi.get(this.state.assetInputAddressValue)}>View Asset</Button> */}
+              {/* <Button onClick={() => assetApi.create()}>View Asset</Button> */}
+              <Button onClick={() => nxsApi.assetApi.update()}>View Asset</Button>
+            </div>
 
-        <div className="mt2">
-          <div>
-            This textbox's content will be remembered even when you navigate
-            away from this module
-          </div>
-          <DemoTextField
-            value={inputValue}
-            onChange={this.handleChange}
-            placeholder="Type anything here"
-          />
-        </div>
+            <div className="mt2 flex center">
+              Show number of connections&nbsp;&nbsp;
+              <Tooltip.Trigger
+                position="right"
+                tooltip="This setting will be remembered even when the wallet is restarted"
+              >
+                <Switch
+                  checked={showingConnections}
+                  onChange={this.confirmToggle}
+                />
+              </Tooltip.Trigger>
+            </div>
+            {!!showingConnections && <div>Connections: {coreInfo.connections}</div>}
 
-        <div className="mt2">
-          <div>
-            Enter the address of the Asset
-          </div>
-          <AssetTextField
-            value={this.state.assetInputAddressValue}
-            onChange={e => this.handleAssetInputAddressChange(e)}
-            placeholder="Address..."
-          />
-          <Button onClick={() => this.getAsset(this.state.assetInputAddressValue)}>View Asset</Button>
-        </div>
+            <div className="mt2">
+              <div>
+                This textbox's content will be remembered even when you navigate
+                away from this module
+              </div>
+              <DemoTextField
+                value={inputValue}
+                onChange={this.handleChange}
+                placeholder="Type anything here"
+              />
+            </div>
 
-        <div className="mt2">
-          <Button onClick={this.getDifficulty}>View mining difficulty</Button>
-        </div>
-        <div className="mt2">
-          <Button onClick={this.getTritiumMetrics}>View Tritium metrics</Button>
-        </div>
-        <div className="mt2">
-          <span>Current Tritium User Status: </span>
-          <span>{userStatus ? userStatus.username : 'Not Logged In'}</span>
-        </div>
-      </Panel>
+            <div className="mt2">
+              <Button onClick={this.getDifficulty}>View mining difficulty</Button>
+            </div>
+            <div className="mt2">
+              <Button onClick={this.getTritiumMetrics}>View Tritium metrics</Button>
+            </div>
+            <div className="mt2">
+              <span>Current Tritium User Status: </span>
+              <span>{userStatus ? `Logged in as ${userStatus.username}` : 'Not Logged In'}</span>
+            </div>
+          </Panel>
+          :
+          <Panel>
+             <div className="mt2">
+              <Button onClick={this.getDifficulty}>View mining difficulty</Button>
+            </div>
+          </Panel>
+        }
+
+      </React.Fragment>
     );
   }
 }
