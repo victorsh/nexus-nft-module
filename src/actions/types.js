@@ -8,3 +8,6 @@ export const SHOW_CONNECTIONS = 'SHOW_CONNECTIONS';
 export const HIDE_CONNECTIONS = 'HIDE_CONNECTIONS';
 
 export const UPDATE_INPUT = 'UPDATE_INPUT';
+
+export const SWITCH_PAGE = 'SWITCH_PAGE';
+export const UPDATE_PAGE = 'UPDATE_PAGE';

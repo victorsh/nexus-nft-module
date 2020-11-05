@@ -32,3 +32,8 @@ export const updateInput = (inputValue) => ({
   type: TYPE.UPDATE_INPUT,
   payload: inputValue,
 });
+
+export const switchPage = (page) => ({
+  type: TYPE.UPDATE_PAGE,
+  payload: page,
+});

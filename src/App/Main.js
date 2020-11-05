@@ -2,6 +2,7 @@ import {
   showConnections,
   hideConnections,
   updateInput,
+  switchPage,
 } from 'actions/actionCreators';
 
 import nxsApi from '../nxs-api/index'
@@ -42,16 +43,17 @@ const AssetTextField = styled(TextField)({
     coreInfo: state.coreInfo,
     showingConnections: state.settings.showingConnections,
     inputValue: state.ui.inputValue,
+    currentPage: state.ui.currentPage,
     userStatus: state.user,
   }),
-  { showConnections, hideConnections, updateInput }
+  { showConnections, hideConnections, updateInput, switchPage }
 )
 class Main extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       assetInputAddressValue: '',
-      isMarketView: false,
+      isMarketView: true,
     }
   }
   
@@ -76,6 +78,10 @@ class Main extends React.Component {
   handleChange = (e) => {
     this.props.updateInput(e.target.value);
   };
+
+  handlePageChange = (page) => {
+    this.props.switchPage(page);
+  }
 
   handleAssetInputAddressChange = (e) => {
     this.setState({ assetInputAddressValue: e.target.value })
@@ -120,17 +126,17 @@ class Main extends React.Component {
 
         {/* Navi */}
         <div style={{ marginLeft: '40%' }}>
-          <Button>Market</Button>
-          <Button>Manage</Button>
+          <Button onClick={() => this.handlePageChange('MARKET')}>Market</Button>
+          <Button onClick={() => this.handlePageChange('MANAGE')}>Manage</Button>
         </div>
         
         {this.isMarketView ? 
           <Panel
-            title="React Module Example"
+            title="Market"
             icon={{ url: 'react.svg', id: 'icon' }}
           >
-            <div className="mt2" style={{display: "flex"}}>
-              <div style={{width: "50%"}}>
+            <div className="mt2" style={{ display: "flex" }}>
+              <div style={{ width: "50%" }}>
                 <div>
                   Asset Address
                 </div>
@@ -140,11 +146,21 @@ class Main extends React.Component {
                   placeholder="Address..."
                 />
               </div>
-              {/* <Button onClick={() => assetApi.get(this.state.assetInputAddressValue)}>View Asset</Button> */}
-              {/* <Button onClick={() => assetApi.create()}>View Asset</Button> */}
-              <Button onClick={() => nxsApi.assetApi.update()}>View Asset</Button>
+              <Button onClick={() => assetApi.get(this.state.assetInputAddressValue)}>View Asset Details</Button>
             </div>
 
+            <div>
+              <span>Market List</span>
+              <div>
+                Name:
+                Price:
+                Content:
+                <Button onClick={() => console.log('buy')}>Buy</Button>
+              </div>
+            </div>
+
+            {/* Example Code */}
+            {/* _-_-_-_-_-_-_-_- */}
             <div className="mt2 flex center">
               Show number of connections&nbsp;&nbsp;
               <Tooltip.Trigger
@@ -183,7 +199,10 @@ class Main extends React.Component {
             </div>
           </Panel>
           :
-          <Panel>
+          <Panel
+            title="Manage"
+            icon={{ url: 'react.svg', id: 'icon' }}
+          >
              <div className="mt2">
               <Button onClick={this.getDifficulty}>View mining difficulty</Button>
             </div>
